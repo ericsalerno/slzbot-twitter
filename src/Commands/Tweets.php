@@ -29,6 +29,13 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
         }
 
         $name = mb_substr($parameters[0], 1);
+
+        if (!preg_match('#^[a-zA-Z0-9_-]+$#', $name))
+        {
+            $bot->sendMessage("The username specified doesn't seem to match our filters.", $channel);
+            return;
+        }
+
         $count = (!empty($parameters[1]) ? intval($parameters[1]) : 1);
         if (empty($count))
         {
