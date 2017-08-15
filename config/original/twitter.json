@@ -1,0 +1,6 @@
+{
+  "consumerKey": "yourKey",
+  "consumerSecret": "yourSecret",
+  "accessToken": "yourToken",
+  "accessTokenSecret": "yourTokenSecret"
+}

@@ -1,0 +1,35 @@
+{
+    "name": "ericsalerno/slzbot-twitter",
+    "description": "Simple twitter bot implementation of ericsalerno/slzbot-irc",
+    "keywords": [
+        "PHP",
+        "IRC",
+        "Bot",
+        "Twitter"
+    ],
+    "homepage": "https://www.salernolabs.com/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eric Salerno",
+            "email": "salernolabs@gmail.com",
+            "homepage": "http://www.ericsalerno.com/",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "salernolabs@gmail.com",
+        "issues": "https://github.com/ericsalerno/slzbot-irc/issues",
+        "source": "https://github.com/ericsalerno/slzbot-irc/releases"
+    },
+    "require":{
+        "php": ">=5.6",
+        "ericsalerno/slzbot-irc": "^0.1.9",
+        "jublonet/codebird-php": "^3.1"
+    },
+    "autoload":{
+        "psr-4": {
+            "TwitterBot\\": "src/"
+        }
+    }
+}

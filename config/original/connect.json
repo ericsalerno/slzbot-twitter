@@ -1,0 +1,7 @@
+{
+  "nick":"tweetBot",
+  "realName":"SlzBot-Twitter",
+  "server":"irc.irc.irc",
+  "port":6667,
+  "autoJoin":"#channel"
+}
