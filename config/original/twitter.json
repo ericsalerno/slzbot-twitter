@@ -2,5 +2,6 @@
   "consumerKey": "yourKey",
   "consumerSecret": "yourSecret",
   "accessToken": "yourToken",
-  "accessTokenSecret": "yourTokenSecret"
+  "accessTokenSecret": "yourTokenSecret",
+  "debug":"false"
 }

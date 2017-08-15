@@ -49,19 +49,24 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
             return;
         }
 
+        if (\TwitterBot\TwitterBot::$twitterDebug === 'true')
+        {
+            print_r($tweets);
+        }
+
         if (empty($tweets->statuses))
         {
             $bot->sendMessage('No results found!', $channel);
             return;
         }
 
-        $bot->sendMessage('Last ' . ($count == 1 ? 'Tweet' : $count . ' Tweets') . ' from ' . $name . '...', $channel);
         $tweets->statuses = array_reverse($tweets->statuses);
         foreach ($tweets->statuses as $status)
         {
-            $when = new \DateTime($status->created_at);
+            $when = new \DateTime($status->created_at, new \DateTimeZone('UTC'));
+            $when->setTimezone(new \DateTimeZone('America/New_York'));
             $text = $status->text;
-            $bot->sendMessage($parameters[0] . ': ' . $text . ' ' . $when->format('m/d/Y g:iA'), $channel);
+            $bot->sendMessage($parameters[0] . ': ' . html_entity_decode($text) . ' ' . $when->format('m/d/Y g:iA T'), $channel);
         }
     }
 }

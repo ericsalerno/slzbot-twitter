@@ -16,6 +16,11 @@ class TwitterBot extends \SlzBot\IRC\Bot
     static public $twitter;
 
     /**
+     * @var bool
+     */
+    static public $twitterDebug = false;
+
+    /**
      * TwitterBot constructor.
      */
     public function __construct()
@@ -27,6 +32,8 @@ class TwitterBot extends \SlzBot\IRC\Bot
         \Codebird\Codebird::setConsumerKey($twitterInfo->consumerKey, $twitterInfo->consumerSecret);
         static::$twitter = \Codebird\Codebird::getInstance();
         static::$twitter->setToken($twitterInfo->accessToken, $twitterInfo->accessTokenSecret);
+
+        static::$twitterDebug = $twitterInfo->debug;
     }
 
 }

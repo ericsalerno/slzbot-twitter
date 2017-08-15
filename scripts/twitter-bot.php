@@ -32,5 +32,7 @@ $bot->setUser($connectionInfo->nick, $connectionInfo->realName)
     //->addCommand('hello', new \SlzBot\IRC\Commands\TestColors())
     ->addCommand('uptime', new \SlzBot\IRC\Commands\Uptime())
     ->addCommand('tweet', new \TwitterBot\Commands\Tweets())
+    ->addCommand('tweets', new \TwitterBot\Commands\Tweets())
+    ->addCommand('twitter', new \TwitterBot\Commands\Tweets())
     ->setDebug(true)
     ->connect();
