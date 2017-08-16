@@ -8,7 +8,6 @@
  */
 require_once(__DIR__ . '/../vendor/autoload.php');
 
-//No error checking, wee!
 if (!is_file(__DIR__ . '/../config/connect.json'))
 {
     echo "You must copy the configuration files back and updated them before running this script. See README.md for more information.";
@@ -17,7 +16,7 @@ if (!is_file(__DIR__ . '/../config/connect.json'))
 
 $connectionInfo = json_decode(file_get_contents(__DIR__ . '/../config/connect.json'));
 
-$autojoin = new \SlzBot\IRC\Events\AutoJoin();
+$autojoin = new \SlzBot\IRC\Events\Autojoin();
 $autojoin->setAutoJoins($connectionInfo->autoJoin);
 
 $bot = new \TwitterBot\TwitterBot();
