@@ -16,7 +16,7 @@ if (!is_file(__DIR__ . '/../config/connect.json'))
 
 $connectionInfo = json_decode(file_get_contents(__DIR__ . '/../config/connect.json'));
 
-$autojoin = new \SlzBot\IRC\Events\Autojoin();
+$autojoin = new \SlzBot\IRC\Events\AutoJoin();
 $autojoin->setAutoJoins($connectionInfo->autoJoin);
 
 $bot = new \TwitterBot\TwitterBot();
