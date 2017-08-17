@@ -40,7 +40,7 @@ if (!empty($connectionInfo->watch) && is_array($connectionInfo->watch))
     foreach ($connectionInfo->watch as $watchInfo)
     {
         $bot->addScheduledEvent(
-            600 * 1000, /* 10 minutes */
+            (!empty($watchInfo->timeout) ? $watchInfo->timeout : 5) * 600 * 1000, /* 10 minutes */
             new \TwitterBot\Events\TweetWatcher($watchInfo),
             0 /* zero seconds */
         );
