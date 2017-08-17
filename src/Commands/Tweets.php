@@ -102,9 +102,9 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
      */
     private function executeHashtagSearch(\SlzBot\IRC\Bot $bot, \SlzBot\IRC\User $user, $channel, $parameters)
     {
-        $hashTag = mb_substr($parameters[0], 1);
+        $hashTag = $parameters[0];
 
-        if (!preg_match('#^[a-zA-Z0-9_-]+$#', $hashTag))
+        if (!preg_match('#^\#[a-zA-Z0-9_-]+$#', $hashTag))
         {
             $bot->sendMessage("Invalid hashtag, brochacho.", $channel);
             return;
