@@ -160,7 +160,7 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
         $when->setTimezone(new \DateTimeZone('America/New_York'));
         $text = str_replace(["\n", "\t", "\r"], '', $status->text);
 
-        $name = '@' . $status->user->name;
+        $name = '@' . $status->user->screen_name;
         $body = html_entity_decode($text);
         $date = $when->format('m/d/Y g:iA T');
 
