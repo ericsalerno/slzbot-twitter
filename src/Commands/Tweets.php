@@ -89,7 +89,10 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
         $tweets->statuses = array_reverse($tweets->statuses);
         foreach ($tweets->statuses as $status)
         {
-            $bot->sendMessage($this->getPrintableTweet($status), $channel);
+            if (method_exists($bot, 'printTweet'))
+            {
+                $bot->printTweet($status, $channel);
+            }
         }
     }
 
@@ -145,74 +148,11 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
         $tweets->statuses = array_reverse($tweets->statuses);
         foreach ($tweets->statuses as $status)
         {
-            $bot->sendMessage($this->getPrintableTweet($status), $channel);
+            if (method_exists($bot, 'printTweet'))
+            {
+                $bot->printTweet($status, $channel);
+            }
         }
     }
 
-    /**
-     * Get printable tweet
-     *
-     * @param $status
-     * @return string
-     */
-    private function getPrintableTweet($status)
-    {
-        $when = new \DateTime($status->created_at, new \DateTimeZone('UTC'));
-        $when->setTimezone(new \DateTimeZone('America/New_York'));
-        $text = str_replace(["\n", "\t", "\r"], '', $status->text);
-
-        $name = '@' . $status->user->screen_name;
-        $body = html_entity_decode($text);
-        $date = $when->format('m/d/Y g:iA T');
-
-        $body = $this->replaceUrls($body, $status);
-
-        if (!empty($status->retweeted_status))
-        {
-            $body = $this->replaceUrls($body, $status->retweeted_status);
-        }
-
-        if (!empty($status->quoted_status))
-        {
-            $body = $this->replaceUrls($body, $status->retweeted_status);
-        }
-
-        return $name . ': ' . $body . ' ' . $date;
-    }
-
-    /**
-     * Replace urls
-     *
-     * @param $body
-     * @param $source
-     * @return mixed
-     */
-    private function replaceUrls($body, $source)
-    {
-        if (!empty($source->entities->url->urls))
-        {
-            foreach ($source->entities->url->urls as $url)
-            {
-                $body = str_replace($url->url, $url->expanded_url, $body);
-            }
-        }
-
-        if (!empty($source->entities->urls))
-        {
-            foreach ($source->entities->urls as $url)
-            {
-                $body = str_replace($url->url, $url->expanded_url, $body);
-            }
-        }
-
-        if (!empty($source->extended_entities->media))
-        {
-            foreach ($source->extended_entities->media as $media)
-            {
-                $body = str_replace($media->url, $media->media_url_https, $body);
-            }
-        }
-
-        return $body;
-    }
 }

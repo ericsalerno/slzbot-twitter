@@ -33,5 +33,18 @@ $bot->setUser($connectionInfo->nick, $connectionInfo->realName)
     ->addCommand('tweet', new \TwitterBot\Commands\Tweets())
     ->addCommand('tweets', new \TwitterBot\Commands\Tweets())
     ->addCommand('twitter', new \TwitterBot\Commands\Tweets())
-    ->setDebug(true)
-    ->connect();
+    ->setDebug((!empty($connectionInfo->debug) && $connectionInfo->debug == 'true') ? true : false);
+
+if (!empty($connectionInfo->watch) && is_array($connectionInfo->watch))
+{
+    foreach ($connectionInfo->watch as $watchInfo)
+    {
+        $bot->addScheduledEvent(
+            600 * 1000, /* 10 minutes */
+            new \TwitterBot\Events\TweetWatcher($watchInfo),
+            0 /* zero seconds */
+        );
+    }
+}
+
+$bot->connect();
