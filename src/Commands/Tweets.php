@@ -171,6 +171,11 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
             $body = $this->replaceUrls($body, $status->retweeted_status);
         }
 
+        if (!empty($status->quoted_status))
+        {
+            $body = $this->replaceUrls($body, $status->retweeted_status);
+        }
+
         return $name . ': ' . $body . ' ' . $date;
     }
 
@@ -186,6 +191,14 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
         if (!empty($source->entities->url->urls))
         {
             foreach ($source->entities->url->urls as $url)
+            {
+                $body = str_replace($url->url, $url->expanded_url, $body);
+            }
+        }
+
+        if (!empty($source->entities->urls))
+        {
+            foreach ($source->entities->urls as $url)
             {
                 $body = str_replace($url->url, $url->expanded_url, $body);
             }
