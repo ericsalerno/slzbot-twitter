@@ -20,20 +20,21 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
      */
     public function execute(\SlzBot\IRC\Bot $bot, \SlzBot\IRC\User $user, $channel, $parameters)
     {
-        if (empty($parameters[0])) return;
-
-        if ($parameters[0][0] == '@')
+        if (!empty($parameters[0]))
         {
-            $this->executeUsernameSearch($bot, $user, $channel, $parameters);
-            return;
-        }
-        else if ($parameters[0][0] == '#')
-        {
-            $this->executeHashtagSearch($bot, $user, $channel, $parameters);
-            return;
+            if ($parameters[0][0] == '@')
+            {
+                $this->executeUsernameSearch($bot, $user, $channel, $parameters);
+                return;
+            }
+            else if ($parameters[0][0] == '#')
+            {
+                $this->executeHashtagSearch($bot, $user, $channel, $parameters);
+                return;
+            }
         }
 
-        $bot->sendMessage('Try !tweet @username/#hashtag', $channel);
+        $bot->sendMessage('Slzbot-Twitter, fork me on github! Try "!tweet @username/#hashtag" to search tweets from the last seven days.', $channel);
     }
 
     /**
