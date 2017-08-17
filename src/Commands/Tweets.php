@@ -72,7 +72,7 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
         {
             $when = new \DateTime($status->created_at, new \DateTimeZone('UTC'));
             $when->setTimezone(new \DateTimeZone('America/New_York'));
-            $text = $status->text;
+            $text = str_replace(["\n", "\t", "\r"], '', $status->text);
             $bot->sendMessage($parameters[0] . ': ' . html_entity_decode($text) . ' ' . $when->format('m/d/Y g:iA T'), $channel);
         }
     }
