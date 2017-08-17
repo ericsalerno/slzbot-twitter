@@ -22,12 +22,30 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
     {
         if (empty($parameters[0])) return;
 
-        if ($parameters[0][0] != '@')
+        if ($parameters[0][0] == '@')
         {
-            $bot->sendMessage('Try !tweet @username', $channel);
+            $this->executeUsernameSearch($bot, $user, $channel, $parameters);
+            return;
+        }
+        else if ($parameters[0][0] == '#')
+        {
+            $this->executeHashtagSearch($bot, $user, $channel, $parameters);
             return;
         }
 
+        $bot->sendMessage('Try !tweet @username/#hashtag', $channel);
+    }
+
+    /**
+     * Execute username search
+     *
+     * @param \SlzBot\IRC\Bot $bot
+     * @param \SlzBot\IRC\User $user
+     * @param $channel
+     * @param $parameters
+     */
+    private function executeUsernameSearch(\SlzBot\IRC\Bot $bot, \SlzBot\IRC\User $user, $channel, $parameters)
+    {
         $name = mb_substr($parameters[0], 1);
 
         if (!preg_match('#^[a-zA-Z0-9_-]+$#', $name))
@@ -48,6 +66,65 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
         try
         {
             $tweets = \TwitterBot\TwitterBot::$twitter->search_tweets('q=from:' . $name . '&count=' . $count, true);
+        }
+        catch (\Exception $exception)
+        {
+            $bot->sendMessage('Codebird request failed!', $channel);
+            echo $exception->getMessage() . PHP_EOL;
+            return;
+        }
+
+        if (\TwitterBot\TwitterBot::$twitterDebug === 'true')
+        {
+            print_r($tweets);
+        }
+
+        if (empty($tweets->statuses))
+        {
+            $bot->sendMessage('No results found!', $channel);
+            return;
+        }
+
+        $tweets->statuses = array_reverse($tweets->statuses);
+        foreach ($tweets->statuses as $status)
+        {
+            $when = new \DateTime($status->created_at, new \DateTimeZone('UTC'));
+            $when->setTimezone(new \DateTimeZone('America/New_York'));
+            $text = str_replace(["\n", "\t", "\r"], '', $status->text);
+            $bot->sendMessage($parameters[0] . ': ' . html_entity_decode($text) . ' ' . $when->format('m/d/Y g:iA T'), $channel);
+        }
+    }
+
+    /**
+     * Execute hashtag search
+     *
+     * @param \SlzBot\IRC\Bot $bot
+     * @param \SlzBot\IRC\User $user
+     * @param $channel
+     * @param $parameters
+     */
+    private function executeHashtagSearch(\SlzBot\IRC\Bot $bot, \SlzBot\IRC\User $user, $channel, $parameters)
+    {
+        $hashTag = mb_substr($parameters[0], 1);
+
+        if (!preg_match('#^[a-zA-Z0-9_-]+$#', $hashTag))
+        {
+            $bot->sendMessage("Invalid hashtag, brochacho.", $channel);
+            return;
+        }
+
+        $count = (!empty($parameters[1]) ? intval($parameters[1]) : 3);
+        if (empty($count))
+        {
+            $bot->sendMessage('Try !tweet #hashtag <count from 1 to 5>', $channel);
+            return;
+        }
+
+        if ($count > 5) $count = 5;
+
+        try
+        {
+            $tweets = \TwitterBot\TwitterBot::$twitter->search_tweets('q=' . urlencode($hashTag) . '&count=' . $count . '&lang=en', true);
         }
         catch (\Exception $exception)
         {
