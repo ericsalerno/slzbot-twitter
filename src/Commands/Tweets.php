@@ -32,9 +32,14 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
                 $this->executeHashtagSearch($bot, $user, $channel, $parameters);
                 return;
             }
+            else
+            {
+                $this->executeSearch($bot, $user, $channel, $parameters);
+                return;
+            }
         }
 
-        $bot->sendMessage('Slzbot-Twitter, fork me on github! Try "!tweet @username/#hashtag" to search tweets from the last seven days.', $channel);
+        $bot->sendMessage('Slzbot-Twitter, try "!tweet @username/#hashtag/search terms" to search tweets from the last seven days. Fork me on github! https://github.com/ericsalerno/slzbot-twitter', $channel);
     }
 
     /**
@@ -126,6 +131,67 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
         try
         {
             $tweets = \TwitterBot\TwitterBot::$twitter->search_tweets('q=' . urlencode($hashTag) . '&count=' . $count . '&lang=en', true);
+        }
+        catch (\Exception $exception)
+        {
+            $bot->sendMessage('Codebird request failed!', $channel);
+            echo $exception->getMessage() . PHP_EOL;
+            return;
+        }
+
+        if (\TwitterBot\TwitterBot::$twitterDebug === 'true')
+        {
+            print_r($tweets);
+        }
+
+        if (empty($tweets->statuses))
+        {
+            $bot->sendMessage('No results found!', $channel);
+            return;
+        }
+
+        $tweets->statuses = array_reverse($tweets->statuses);
+        foreach ($tweets->statuses as $status)
+        {
+            if (method_exists($bot, 'printTweet'))
+            {
+                $bot->printTweet($status, $channel);
+            }
+        }
+    }
+
+    /**
+     * Do a regular keyword search
+     *
+     * @param \SlzBot\IRC\Bot $bot
+     * @param \SlzBot\IRC\User $user
+     * @param $channel
+     * @param $parameters
+     */
+    private function executeSearch(\SlzBot\IRC\Bot $bot, \SlzBot\IRC\User $user, $channel, $parameters)
+    {
+        $searchString = "";
+
+        $parameterCount = count($parameters);
+        $count = 3;
+        foreach ($parameters as $index => $parameter)
+        {
+            if ($index == ($parameterCount - 1) && is_numeric($parameter))
+            {
+                $count = intval($parameter);
+            }
+            else
+            {
+                if (!empty($searchString)) $searchString .= ' ';
+                $searchString .= $parameter;
+            }
+        }
+
+        if ($count > 5) $count = 5;
+
+        try
+        {
+            $tweets = \TwitterBot\TwitterBot::$twitter->search_tweets('q=' . urlencode($searchString) . '&count=' . $count . '&lang=en', true);
         }
         catch (\Exception $exception)
         {

@@ -21,6 +21,11 @@ class TwitterBot extends \SlzBot\IRC\Bot
     static public $twitterDebug = false;
 
     /**
+     * @var array
+     */
+    protected $adminList = [];
+
+    /**
      * TwitterBot constructor.
      */
     public function __construct()
@@ -104,7 +109,7 @@ class TwitterBot extends \SlzBot\IRC\Bot
 
         if (!empty($status->quoted_status))
         {
-            $body = $this->replaceUrls($body, $status->retweeted_status);
+            $body = $this->replaceUrls($body, $status->quoted_status);
         }
 
         return $name . ': ' . $body . ' ' . $date;
@@ -144,6 +149,29 @@ class TwitterBot extends \SlzBot\IRC\Bot
         }
 
         return $body;
+    }
+
+    /**
+     * Admin nick
+     *
+     * @param $nick
+     */
+    public function addAdminNick($nick)
+    {
+        $this->adminList[$nick] = true;
+    }
+
+    /**
+     * Is admin
+     *
+     * @param \SlzBot\IRC\User $user
+     * @return bool
+     */
+    public function isAdmin(\SlzBot\IRC\User $user)
+    {
+        if (!empty($this->adminList[$user->nickName])) return true;
+
+        return false;
     }
 
 }

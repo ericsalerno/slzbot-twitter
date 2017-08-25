@@ -33,7 +33,16 @@ $bot->setUser($connectionInfo->nick, $connectionInfo->realName)
     ->addCommand('tweet', new \TwitterBot\Commands\Tweets())
     ->addCommand('tweets', new \TwitterBot\Commands\Tweets())
     ->addCommand('twitter', new \TwitterBot\Commands\Tweets())
+    ->addCommand('tweetWatch', new \TwitterBot\Commands\TweetWatch())
     ->setDebug((!empty($connectionInfo->debug) && $connectionInfo->debug == 'true') ? true : false);
+
+if (!empty($connectionInfo->admin) && is_array($connectionInfo->admin))
+{
+    foreach ($connectionInfo->admin as $admin)
+    {
+        $bot->addAdminNick($admin);
+    }
+}
 
 if (!empty($connectionInfo->watch) && is_array($connectionInfo->watch))
 {
