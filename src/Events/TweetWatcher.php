@@ -67,6 +67,8 @@ class TweetWatcher implements \SlzBot\IRC\Events\EventInterface
                 $q = 'q=from:' . $this->name . '&since_id=' . $this->lastTweetId.  '&count=5';
             }
 
+            $q .= '&tweet_mode=extended';
+
             $tweets = \TwitterBot\TwitterBot::$twitter->search_tweets($q, true);
         }
         catch (\Exception $exception)

@@ -3,4 +3,6 @@ composer.phar
 composer.lock
 .irc.rc
 /vendor/
+config/connect.json
+config/twitter.json
 

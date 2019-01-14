@@ -94,7 +94,15 @@ class TwitterBot extends \SlzBot\IRC\Bot
     {
         $when = new \DateTime($status->created_at, new \DateTimeZone('UTC'));
         $when->setTimezone(new \DateTimeZone('America/New_York'));
-        $text = str_replace(["\n", "\t", "\r"], '', $status->text);
+        $text = str_replace(["\n", "\t", "\r"], '', $status->full_text);
+
+        if (!empty($status->retweet_count)) {
+            $text .= ' rt:' . number_format($status->retweet_count);
+        }
+
+        if (!empty($status->favorite_count)) {
+            $text .= ' f:' . number_format($status->favorite_count);
+        }
 
         $name = '@' . $status->user->screen_name;
         $body = html_entity_decode($text);

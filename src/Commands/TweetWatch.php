@@ -10,6 +10,13 @@ namespace TwitterBot\Commands;
 
 class TweetWatch implements \SlzBot\IRC\Commands\CommandInterface
 {
+    /**
+     * @param \SlzBot\IRC\Bot $bot
+     * @param \SlzBot\IRC\User $user
+     * @param $channel
+     * @param $parameters
+     * @return mixed|void
+     */
     public function execute(\SlzBot\IRC\Bot $bot, \SlzBot\IRC\User $user, $channel, $parameters)
     {
         if (method_exists($bot, 'IsAdmin'))
@@ -42,12 +49,16 @@ class TweetWatch implements \SlzBot\IRC\Commands\CommandInterface
         $tweetInfo->channel = $channel;
         $tweetInfo->timeout = $timeout;
 
-        $bot->addScheduledEvent(
-            $timeout * 60 * 1000, /* 10 minutes */
-            new \TwitterBot\Events\TweetWatcher($tweetInfo),
-            0 /* zero seconds */
-        );
+        try {
+            $bot->addScheduledEvent(
+                $timeout * 60 * 1000, /* 10 minutes */
+                new \TwitterBot\Events\TweetWatcher($tweetInfo),
+                0 /* zero seconds */
+            );
 
-        $bot->sendMessage("Now requesting tweets from @" .$tweetInfo->name . " every " . $tweetInfo->timeout . " minutes.", $channel);
+            $bot->sendMessage("Now requesting tweets from @" .$tweetInfo->name . " every " . $tweetInfo->timeout . " minutes.", $channel);
+        } catch (\Exception $exception) {
+            $bot->sendMessage('Sorry there was a problem setting up that tweetWatch: ' . $exception->getMessage(), $channel);
+        }
     }
 }

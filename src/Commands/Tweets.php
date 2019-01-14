@@ -71,7 +71,7 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
 
         try
         {
-            $tweets = \TwitterBot\TwitterBot::$twitter->search_tweets('q=from:' . $name . '&count=' . $count, true);
+            $tweets = \TwitterBot\TwitterBot::$twitter->search_tweets('q=from:' . $name . '&count=' . $count . '&tweet_mode=extended', true);
         }
         catch (\Exception $exception)
         {
@@ -130,7 +130,7 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
 
         try
         {
-            $tweets = \TwitterBot\TwitterBot::$twitter->search_tweets('q=' . urlencode($hashTag) . '&count=' . $count . '&lang=en', true);
+            $tweets = \TwitterBot\TwitterBot::$twitter->search_tweets('q=' . urlencode($hashTag) . '&count=' . $count . '&lang=en&tweet_mode=extended', true);
         }
         catch (\Exception $exception)
         {
@@ -191,7 +191,7 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
 
         try
         {
-            $tweets = \TwitterBot\TwitterBot::$twitter->search_tweets('q=' . urlencode($searchString) . '&count=' . $count . '&lang=en', true);
+            $tweets = \TwitterBot\TwitterBot::$twitter->search_tweets('q=' . urlencode($searchString) . '&count=' . $count . '&lang=en&tweet_mode=extended', true);
         }
         catch (\Exception $exception)
         {

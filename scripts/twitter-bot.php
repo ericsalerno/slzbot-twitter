@@ -32,8 +32,10 @@ $bot->setUser($connectionInfo->nick, $connectionInfo->realName)
     ->addCommand('uptime', new \SlzBot\IRC\Commands\Uptime())
     ->addCommand('tweet', new \TwitterBot\Commands\Tweets())
     ->addCommand('tweets', new \TwitterBot\Commands\Tweets())
+    ->addCommand('t', new \TwitterBot\Commands\Tweets())
     ->addCommand('twitter', new \TwitterBot\Commands\Tweets())
     ->addCommand('tweetWatch', new \TwitterBot\Commands\TweetWatch())
+    ->addCommand('tweetwatch', new \TwitterBot\Commands\TweetWatch())
     ->setDebug((!empty($connectionInfo->debug) && $connectionInfo->debug == 'true') ? true : false);
 
 if (!empty($connectionInfo->admin) && is_array($connectionInfo->admin))
