@@ -34,7 +34,11 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
             }
             else
             {
-                $this->executeSearch($bot, $user, $channel, $parameters);
+                if (is_numeric($parameters[0][0])) {
+                    $this->executeSpecificTweet($bot, $user, $channel, $parameters);
+                } else {
+                    $this->executeSearch($bot, $user, $channel, $parameters);
+                }
                 return;
             }
         }
@@ -221,4 +225,79 @@ class Tweets implements \SlzBot\IRC\Commands\CommandInterface
         }
     }
 
+    /**
+     * Loads tweets by id and number of retweets
+     * @param \SlzBot\IRC\Bot $bot
+     * @param \SlzBot\IRC\User $user
+     * @param $channel
+     * @param $parameters
+     */
+    private function executeSpecificTweet(\SlzBot\IRC\Bot $bot, \SlzBot\IRC\User $user, $channel, $parameters)
+    {
+        $count = 0;
+
+        if (!empty($parameters[1])) {
+            $count = intval($parameters[1]);
+        }
+
+        if ($count > 5 || $count < 0) {
+            $count = 5;
+        }
+
+        try
+        {
+            $tweet = \TwitterBot\TwitterBot::$twitter->statuses_show_ID(
+                'id=' . $parameters[0] . '&lang=en&tweet_mode=extended&include_entities=true', true
+            );
+        }
+        catch (\Exception $exception)
+        {
+            $bot->sendMessage('Codebird request failed!', $channel);
+            echo $exception->getMessage() . PHP_EOL;
+            return;
+        }
+
+        if (\TwitterBot\TwitterBot::$twitterDebug === 'true')
+        {
+            print_r($tweet);
+        }
+
+        if (empty($tweet->id))
+        {
+            $bot->sendMessage('Couldn\'t find a tweet with that id.', $channel);
+            return;
+        }
+
+        if (method_exists($bot, 'printTweet'))
+        {
+            $bot->printTweet($tweet, $channel);
+        }
+
+        if (!$count) {
+            return;
+        }
+
+        try
+        {
+            $tweets = \TwitterBot\TwitterBot::$twitter->statuses_retweets_ID(
+                'id=' . $parameters[0] . '&lang=en&tweet_mode=extended&include_entities=true', true
+            );
+        }
+        catch (\Exception $exception)
+        {
+            $bot->sendMessage('Codebird request failed!', $channel);
+            echo $exception->getMessage() . PHP_EOL;
+            return;
+        }
+
+        if (empty($tweets->statuses)) {
+            return;
+        }
+
+        if (method_exists($bot, 'printTweet')) {
+            foreach ($tweets->statuses as $tweet) {
+                $bot->printTweet($tweet, $channel);
+            }
+        }
+    }
 }
